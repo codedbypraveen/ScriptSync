@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptSync - Test Case Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- SheetJS for Excel support -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js for dashboard graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 ScriptSync</h1>
+            <p class="subtitle">Test Case Management System</p>
+        </header>
+
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab-btn" data-tab="testcases">Test Cases</button>
+            <button class="tab-btn" data-tab="modules">Modules</button>
+            <button class="tab-btn" data-tab="submodules">Sub-Modules</button>
+            <button class="tab-btn" data-tab="priorities">Priorities</button>
+            <button class="tab-btn" data-tab="statuses">Automation Status</button>
+            <button class="tab-btn" data-tab="users">Users</button>
+            <button class="tab-btn" data-tab="tags">Tags</button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section-header">
+                <h2>📊 Dashboard Overview</h2>
+                <button class="btn btn-secondary" onclick="refreshDashboard()">🔄 Refresh</button>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon">📝</div>
+                    <div class="summary-content">
+                        <div class="summary-label">Total Test Cases</div>
+                        <div class="summary-value" id="totalTestCases">0</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">📦</div>
+                    <div class="summary-content">
+                        <div class="summary-label">Modules</div>
+                        <div class="summary-value" id="totalModules">0</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">📂</div>
+                    <div class="summary-content">
+                        <div class="summary-label">Sub-Modules</div>
+                        <div class="summary-value" id="totalSubModules">0</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">✅</div>
+                    <div class="summary-content">
+                        <div class="summary-label">Automation Rate</div>
+                        <div class="summary-value" id="automationRate">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Automation Status Overview -->
+                <div class="dashboard-card">
+                    <h3 class="dashboard-card-title">📊 Automation Status Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="statusOverviewChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Priority Overview -->
+                <div class="dashboard-card">
+                    <h3 class="dashboard-card-title">⭐ Test Case Priority Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="priorityOverviewChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Sub-Module Statistics -->
+                <div class="dashboard-card full-width">
+                    <h3 class="dashboard-card-title">📂 Sub-Modules by Automation Status</h3>
+                    <div class="chart-container-large">
+                        <canvas id="subModuleStatusChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-card full-width">
+                    <h3 class="dashboard-card-title">📂 Sub-Modules by Priority</h3>
+                    <div class="chart-container-large">
+                        <canvas id="subModulePriorityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Cases Tab -->
+        <div id="testcases" class="tab-content">
+            <div class="section-header">
+                <h2>Test Cases</h2>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary" onclick="exportTestCases()">📥 Export CSV</button>
+                    <button class="btn btn-secondary" onclick="openImportModal()">📤 Import CSV/Excel</button>
+                    <button class="btn btn-primary" onclick="openTestCaseModal()">+ New Test Case</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="testCaseTable" class="searchable-table">
+                    <thead>
+                        <tr>
+                            <th>Testcase ID</th>
+                            <th>Module</th>
+                            <th>Sub Module/ Functionality</th>
+                            <th>Test Case Description</th>
+                            <th>Pre-Conditions/Test Data</th>
+                            <th>Test Script / Actions</th>
+                            <th>Expected Result</th>
+                            <th>Test Case Priority</th>
+                            <th>Automation Status</th>
+                            <th>Automated By</th>
+                            <th>Automation Comments</th>
+                            <th>Clubbed TC ID</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr class="filter-row">
+                            <th><input type="text" class="column-search" data-column="0" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="1" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="2" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="3" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="4" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="5" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="6" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="7" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="8" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="9" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="10" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="11" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" data-column="12" placeholder="Search..."></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="testCaseTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modules Tab -->
+        <div id="modules" class="tab-content">
+            <div class="section-header">
+                <h2>Modules</h2>
+                <button class="btn btn-primary" onclick="openModuleModal()">+ New Module</button>
+            </div>
+            <div class="cards-grid" id="modulesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Sub-Modules Tab -->
+        <div id="submodules" class="tab-content">
+            <div class="section-header">
+                <h2>Sub-Modules / Functionality</h2>
+                <button class="btn btn-primary" onclick="openSubModuleModal()">+ New Sub-Module</button>
+            </div>
+            <div class="cards-grid" id="subModulesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Priorities Tab -->
+        <div id="priorities" class="tab-content">
+            <div class="section-header">
+                <h2>Test Case Priorities</h2>
+                <button class="btn btn-primary" onclick="openPriorityModal()">+ New Priority</button>
+            </div>
+            <div class="cards-grid" id="prioritiesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Automation Statuses Tab -->
+        <div id="statuses" class="tab-content">
+            <div class="section-header">
+                <h2>Automation Statuses</h2>
+                <button class="btn btn-primary" onclick="openStatusModal()">+ New Status</button>
+            </div>
+            <div class="cards-grid" id="statusesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="section-header">
+                <h2>Automated By (Users)</h2>
+                <button class="btn btn-primary" onclick="openUserModal()">+ New User</button>
+            </div>
+            <div class="cards-grid" id="usersGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Tags Tab -->
+        <div id="tags" class="tab-content">
+            <div class="section-header">
+                <h2>Tags</h2>
+                <button class="btn btn-primary" onclick="openTagModal()">+ New Tag</button>
+            </div>
+            <div class="cards-grid" id="tagsGrid">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="modal-overlay"></div>
+
+    <script src="app.js?v=2025122501"></script>
+</body>
+</html>
+
