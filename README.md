@@ -2,11 +2,6 @@
 
 **ScriptSync** is a comprehensive Test Case Management System designed to streamline test case organization, automation tracking, and reporting. Built with Spring Boot and modern web technologies, it provides an intuitive interface for managing test cases across multiple modules and functionalities.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.x-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-green)
-
 ## ✨ Features
 
 ### 📊 Dashboard Analytics
